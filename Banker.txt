@@ -1,0 +1,72 @@
+import java.util.Scanner;
+
+public class banker {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		Scanner sc=new Scanner(System.in);
+		int p, r, i, j, sum, flag = 0;
+		String ss="";
+		System.out.println("Enter the number of processes :");
+		p = sc.nextInt();
+		System.out.println("Enter the number of resources :");
+		r = sc.nextInt();
+		System.out.println("Enter the number of instances of each resources");
+		boolean marked[] = new boolean[p];
+		int total[] = new int[r], av[] = new int[r], max[][] = new int[p][r], alloc[][] = new int[p][r], need[][] = new int[p][r];
+		for (i = 0; i < r; i++)
+			total[i] = sc.nextInt();
+		System.out.println("Enter the maximum instances of resources needed by :");
+		for (i = 0; i < p; i++) {
+			System.out.print("Process " + (i+1) + " :");
+			for (j = 0; j < r; j++)
+				max[i][j] = sc.nextInt();
+		}
+		System.out.println("Enter the number of instances of each resource allocated to :");
+		for (i = 0; i < p; i++) {
+			System.out.print("Process " + (i+1) + " :");
+			for (j = 0; j < r; j++) {
+				alloc[i][j] = sc.nextInt();
+				need[i][j] = max[i][j] - alloc[i][j];
+			}
+		}
+		//Compute Available resource matrix
+		for (i = 0; i < r; i++) {
+			sum = 0;
+			for (j = 0; j < p; j++) {
+				sum += alloc[j][i];
+			}
+			av[i] = total[i] - sum;
+		}
+		while (flag == 0) {
+			flag = 1;
+			for (i = 0; i < p; i++) {
+				if (marked[i] == false) {
+					for (j = 0; j < r; j++) {
+						if (need[i][j] > av[j]) {
+							break;
+						}
+					}
+					if (j == r) {
+						marked[i] = true;
+						ss += " " + "P" + i;
+						for (int k = 0; k < r; k++) {
+							av[k] += alloc[i][k];
+						}
+						flag = 0;
+					}
+				}
+			}
+		}
+		for (i = 0; i < p; i++) {
+			if (!marked[i])
+				break;
+		}
+		//System.out.println(ss);
+		if(i == p)
+			System.out.println("System is in a safe state.\n Safe Sequence :" + ss);
+		else
+			System.out.println("System is in a deadlock.");
+	}
+
+}

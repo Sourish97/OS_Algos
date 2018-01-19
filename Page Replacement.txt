@@ -1,0 +1,262 @@
+package pgreplacement;
+
+import java.util.*;
+class replacement
+{
+	public static void main(String args[])
+	{
+		Scanner sc=new Scanner(System.in);
+		System.out.print("Enter the length of page string:");
+		int n,hit=0,flag=0,max,full=0,ch,t=0;
+		n=sc.nextInt();
+		int a[]=new int[n];
+		
+		System.out.println("Enter the page string:");
+		for(int i=0;i<n;i++)
+		{
+			a[i]=sc.nextInt();
+		}
+		int m;
+		System.out.print("Enter number of frames ");
+		m=sc.nextInt();
+		int frames[]=new int[m];
+		int optimal[]=new int[m];
+		int lru[]=new int[m];
+		for(int i=0;i<m;i++)
+		{
+			frames[i]=-1;
+		}
+		System.out.print("1.FIFO\n2.LRU\n3.OPTIMAL ");
+		ch=sc.nextInt();
+		switch(ch)
+		{
+		
+		case 1:
+		for(int i=0;i<n;i++)
+		{
+			flag=0;
+			for(int j=0;j<m;j++)
+			{
+				if(a[i]==frames[j])
+				{
+					hit++;
+					flag=1;
+					break;				
+				}
+			}
+			if(flag==1)
+			{
+				for(int j=0;j<m;j++)
+					System.out.print(frames[j]+" ");
+				System.out.println("HIT");
+				continue;
+			}
+			else if(full!=m)
+			{
+				frames[full]=a[i];
+				full++;
+			}
+			else
+			{
+				frames[t]=a[i];
+				if(t==m-1)
+					t=0;
+				else
+					t++;
+			}
+			for(int j=0;j<m;j++)
+				System.out.print(frames[j]+" ");
+			System.out.println();
+		}
+		System.out.println("FIFO NO. OF HITS "+hit+"\nHIT RATIO :"+hit/(double)n);
+		break;
+		case 2:
+		for(int i=0;i<m;i++)
+			lru[i]=0;
+		for(int i=0;i<n;i++)
+		{
+			flag=0;
+			for(int j=0;j<m;j++)
+			{
+				if(a[i]==frames[j])
+				{
+					hit++;
+					flag=1;
+					for(int k=0;k<m;k++)
+						lru[k]++;
+					lru[j]=1;
+					break;				
+				}
+			}
+			if(flag==1)
+			{
+				for(int j=0;j<m;j++)
+					System.out.print(frames[j]+" ");
+				System.out.println("HIT");
+				continue;
+			}
+			else if(full!=m)
+			{
+				frames[full]=a[i];
+				full++;
+				for(int k=0;k<m;k++)
+					lru[k]++;
+				lru[full-1]=1;
+			}
+			else
+			{
+				max=0;
+				for(int j=0;j<m;j++)
+				{
+					if(lru[j]>lru[max])
+						max=j;
+				}
+				frames[max]=a[i];
+				for(int k=0;k<m;k++)
+					lru[k]++;
+				lru[max]=1;
+			}
+			for(int j=0;j<m;j++)
+				System.out.print(frames[j]+" ");
+			System.out.println();
+		}
+		System.out.println("FIFO NO. OF HITS "+hit+"\nHIT RATIO :"+hit/(double)n);
+
+
+		break;
+		case 3:
+		for(int i=0;i<n;i++)
+		{
+			flag=0;
+			for(int j=0;j<m;j++)
+			{
+				if(a[i]==frames[j])
+				{
+					hit++;
+					flag=1;
+					break;				
+				}
+			}
+			if(flag==1)
+			{
+				for(int j=0;j<m;j++)
+					System.out.print(frames[j]+" ");
+				System.out.println("HIT");
+				continue;
+			}
+			else if(full!=m)
+			{
+				frames[full]=a[i];
+				full++;
+			}
+			else
+			{
+				for(int j=0;j<m;j++)
+				{
+					for(int k=i;k<n;k++)
+					{
+						if(a[k]==frames[j])
+							optimal[j]=k;
+					}
+				}
+				max=0;
+				for(int j=0;j<m;j++)
+				{
+					if(optimal[j]>optimal[max])
+						max=j;
+				}
+				frames[max]=a[i];
+			}
+			for(int j=0;j<m;j++)
+				System.out.print(frames[j]+" ");
+			System.out.println();
+			
+			
+		}
+		System.out.println("OPTIMAL NO. OF HITS "+hit+"\nHIT RATIO :"+hit/(double)n);
+		}
+	}
+}
+
+OUTPUT :
+
+CASE 1:
+
+Enter the length of page string:15
+Enter the page string:
+1 2 3 1 5 2 7 4 1 4 2 1 7 3 3
+Enter number of frames 3
+1.FIFO
+2.LRU
+3.OPTIMAL 1
+1 -1 -1
+1 2 -1
+1 2 3
+1 2 3 HIT
+5 2 3
+5 2 3 HIT
+5 7 3
+5 7 4
+1 7 4
+1 7 4 HIT
+1 2 4
+1 2 4 HIT
+1 2 7
+3 2 7
+3 2 7 HIT
+FIFO NO. OF HITS 5
+HIT RATIO :0.3333333333333333
+
+CASE 2 :
+
+Enter the length of page string:15
+Enter the page string:
+1 2 3 1 5 2 7 4 1 4 2 1 7 3 3
+Enter number of frames 3
+1.FIFO
+2.LRU
+3.OPTIMAL 2
+1 -1 -1
+1 2 -1
+1 2 3
+1 2 3 HIT
+1 5 3
+1 5 2
+7 5 2
+7 4 2
+7 4 1
+7 4 1 HIT
+2 4 1
+2 4 1 HIT
+2 7 1
+3 7 1
+3 7 1 HIT
+LRU NO. OF HITS 4
+HIT RATIO :0.26666666666666666
+
+CASE 3 :
+
+Enter the length of page string:15
+Enter the page string:
+1 2 3 1 5 2 7 4 1 4 2 1 7 3 3
+Enter number of frames 3
+1.FIFO
+2.LRU
+3.OPTIMAL 3
+1 -1 -1
+1 2 -1
+1 2 3
+1 2 3 HIT
+1 2 5
+1 2 5 HIT
+1 2 7
+1 2 4
+1 2 4 HIT
+1 2 4 HIT
+1 2 4 HIT
+1 2 4 HIT
+1 2 7
+1 2 3
+1 2 3 HIT
+OPTIMAL NO. OF HITS 7
+HIT RATIO :0.4666666666666667

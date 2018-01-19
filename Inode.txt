@@ -1,0 +1,70 @@
+import java.util.*;
+class Inode
+ {
+  public static void main(String args[])
+  {
+   long block, direct, indirect, doublein, triplein, bno, double_add, triple_add, indir_add, t, b, o;
+   block=1024;
+   direct=block*10;
+   indirect = (256*block);
+   indir_add = indirect+direct;
+   doublein = 256*indirect;
+   double_add = doublein+indir_add;
+   triplein = 256*doublein;
+   triple_add = double_add+triplein;
+   Scanner sc = new Scanner(System.in);
+   System.out.println("Enter the byte number: ");
+   bno = sc.nextInt();
+   if(bno<direct)
+    {
+     b=(int)bno/block;
+	 System.out.println("Direct Block No: "+b);
+     o=bno-b*block;
+	 System.out.println("Offset: "+o);
+    }
+   else if(bno<indir_add)
+    {
+     t=bno-direct;
+     b=(int)t/block;
+     System.out.println ("1st level Block No: "+b);
+     o=t-b*block;
+     System.out.println("Offset: "+o);
+   }
+   else if(bno<double_add)
+    {
+	   t=bno-indir_add;
+	   b=(int)t/indirect;
+	   System.out.println("1st level Block No: "+b);
+	   t=t-b*indirect;
+	   b=(int)t/block;
+	   System.out.println("2nd level Block No: "+b);
+	   o=t-b*block;
+	   System.out.println("Offset: "+o);
+    }
+   else
+    {
+     System.out.println("Triple indirect starts from: "+double_add);
+     t = bno-double_add;
+     b = (int)(t/doublein);
+     System.out.println("1st level Block No: "+b);
+     t=t-b*doublein;
+     b = (int)(t/indirect);
+     System.out.println("2nd level Block No: "+b);
+     t=t-b*indirect;
+     b = (int)(t/block);
+     System.out.println("3rd level Block No: "+b);
+     o = t-(b*block);
+     System.out.println("Offset: "+o);
+    } 
+  }
+ }
+
+OUTPUT:
+java Inode
+Enter the byte number:
+67382278
+Triple indirect starts from: 67381248
+1st level Block No: 0
+2nd level Block No: 0
+3rd level Block No: 1
+Offset: 6
